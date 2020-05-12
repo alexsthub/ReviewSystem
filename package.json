@@ -18,12 +18,14 @@
   "homepage": "https://github.com/alexsthub/ReviewSystem#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
     "@types/mongoose": "^5.7.16",
     "@types/morgan": "^1.9.0",
+    "@types/mysql": "^2.15.10",
     "@types/node": "^13.13.5"
   }
 }

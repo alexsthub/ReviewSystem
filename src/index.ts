@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 
+import db from "./db/database";
 import { handleReviewAdd, handleReviewDelete, handleReviewEdit } from "./handlers/reviewHandlers";
 import {
 	handleGetTotalCompanies,
@@ -29,19 +30,19 @@ const port: number = Number(process.env.PORT) || 8080;
 // TODO: Tests
 
 app.get("/company", (req: any, res: any) => {
-	handleGetTotalCompanies(req, res);
+	handleGetTotalCompanies(req, res, db);
 });
 
 app.post("/company", (req: any, res: any) => {
-	handleCompanyAdd(req, res);
+	handleCompanyAdd(req, res, db);
 });
 
 app.delete("/company/:companyID", (req: any, res: any) => {
-	handleCompanyDelete(req, res);
+	handleCompanyDelete(req, res, db);
 });
 
 app.patch("/company/:companyID", (req: any, res: any) => {
-	handleCompanyEdit(req, res);
+	handleCompanyEdit(req, res, db);
 });
 
 app.get("/products", (req: any, res: any) => {

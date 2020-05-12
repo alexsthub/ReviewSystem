@@ -1,8 +1,8 @@
 import mysql from "mysql";
-import { getUser } from "./helpers";
+import { getUser, isOwner, getCompanyByID } from "./helpers";
 
 function handleGetTotalCompanies(req: any, res: any, db: mysql.Connection) {
-	db.query("Select * from companies", function (err, response: object[]) {
+	db.query("SELECT * from companies", function (err, response: object[]) {
 		if (err) {
 			res.status(400);
 			res.send("Error retrieving companies");
@@ -30,7 +30,15 @@ function handleCompanyAdd(req: any, res: any, db: mysql.Connection) {
 				return;
 			}
 			res.status(201);
-			res.send(response);
+			const newID = response.insertId;
+			getCompanyByID(newID, db, function (err: any, response: any) {
+				if (err) {
+					res.send("Inserted but cannot get the returned result");
+					return;
+				}
+				res.json(response[0]);
+				return;
+			});
 		}
 	);
 }
@@ -75,9 +83,9 @@ function handleCompanyEdit(req: any, res: any, db: mysql.Connection) {
 			res.send("Error updating company name");
 			return;
 		}
-		db.query("SELECT * from companies WHERE id = ?", companyID, function (err, response) {
-			res.status(200);
-			if (err || response.length !== 1) {
+
+		getCompanyByID(companyID, db, function (err: any, response: any) {
+			if (err) {
 				res.send("Updated but cannot get the returned result");
 				return;
 			}
@@ -85,10 +93,6 @@ function handleCompanyEdit(req: any, res: any, db: mysql.Connection) {
 			return;
 		});
 	});
-}
-
-function isOwner(user: any, companyID: number) {
-	return user && companyID && user.id === companyID;
 }
 
 export { handleGetTotalCompanies, handleCompanyAdd, handleCompanyDelete, handleCompanyEdit };

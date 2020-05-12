@@ -10,6 +10,7 @@ import {
 	handleCompanyEdit,
 } from "./handlers/companyHandlers";
 import {
+	handleGetSpecificProduct,
 	handleGetTotalProducts,
 	handleGetCompanyProducts,
 	handleProductAdd,
@@ -23,10 +24,6 @@ app.use(morgan("dev"));
 
 const port: number = Number(process.env.PORT) || 8080;
 
-// TODO: Database for company
-// TODO: Need a database of products
-// TODO: Database for review
-// TODO: Make some fukin schema
 // TODO: Tests
 
 app.get("/company", (req: any, res: any) => {
@@ -45,36 +42,40 @@ app.patch("/company/:companyID", (req: any, res: any) => {
 	handleCompanyEdit(req, res, db);
 });
 
+app.get("/products/:productID", (req: any, res: any) => {
+	handleGetSpecificProduct(req, res, db);
+});
+
 app.get("/products", (req: any, res: any) => {
-	handleGetTotalProducts(req, res);
+	handleGetTotalProducts(req, res, db);
 });
 
 app.get("/products/:companyID", (req: any, res: any) => {
-	handleGetCompanyProducts(req, res);
+	handleGetCompanyProducts(req, res, db);
 });
 
 app.post("/products", (req: any, res: any) => {
-	handleProductAdd(req, res);
+	handleProductAdd(req, res, db);
 });
 
 app.delete("/products/:productID", (req: any, res: any) => {
-	handleProductDelete(req, res);
+	handleProductDelete(req, res, db);
 });
 
 app.patch("/products/:productID", (req: any, res: any) => {
-	handleProductEdit(req, res);
+	handleProductEdit(req, res, db);
 });
 
 app.post("/reviews/:productID", (req: any, res: any) => {
-	handleReviewAdd(req, res);
+	handleReviewAdd(req, res, db);
 });
 
 app.delete("/reviews/:reviewID", (req: any, res: any) => {
-	handleReviewDelete(req, res);
+	handleReviewDelete(req, res, db);
 });
 
 app.patch("/reviews/:reviewID", (req: any, res: any) => {
-	handleReviewEdit(req, res);
+	handleReviewEdit(req, res, db);
 });
 
 app.get("/", (req, res) => {

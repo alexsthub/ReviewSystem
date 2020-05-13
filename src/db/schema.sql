@@ -5,7 +5,7 @@ BY 'password';
 create database if not exists reviewsystem;
 use reviewsystem;
 
-create table if not exists companies
+CREATE TABLE if not exists companies
 (
   id int not null auto_increment primary key,
   company_name varchar(64) not null,
@@ -19,21 +19,20 @@ insert into companies
 values
 ("test inc", "M3fdQvztKvdagO84WEvNJPf5krB3", current_timestamp);
 
-create table if not exists products 
-(
+CREATE TABLE if not exists products (
   id int not null auto_increment primary key,
   product_name varchar(64) not null,
   company_id int not null,
   price double not null,
-  created timestamp not null,
-  UNIQUE_KEY(product_name)
+  created timestamp not null,    
+  UNIQUE KEY(product_name)
 );
-create table if not exists reviews
-(
+
+CREATE TABLE if not exists reviews (
   id int not null auto_increment primary key,
   product_id int not null, 
   rating int not null,
   message varchar(256),
   created_user_id varchar(64) not null,
-  time_created timestamp not null,
+  time_created timestamp not null
 );

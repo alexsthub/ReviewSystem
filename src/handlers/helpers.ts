@@ -6,7 +6,7 @@ function getUser(req: any) {
 	return user;
 }
 
-function isOwner(user: any, compareID: number) {
+function isOwner(user: any, compareID: any) {
 	return user && compareID && user.id === compareID;
 }
 
@@ -29,7 +29,7 @@ function getReviewByID(id: number, db: mysql.Connection, callback: Function) {
 }
 
 function verifyUserCanModifyProduct(
-	userID: number,
+	userID: string,
 	productID: number,
 	db: mysql.Connection,
 	callback: Function

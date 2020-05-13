@@ -114,7 +114,7 @@ function handleReviewDelete(req: any, res: any, db: mysql.Connection) {
 			res.status(400);
 			return;
 		}
-		if (isOwner(!user, response[0].created_user_id)) {
+		if (!isOwner(user, response[0].created_user_id)) {
 			res.status(401);
 			res.send("User is not authorized");
 			return;
@@ -152,7 +152,7 @@ function handleReviewEdit(req: any, res: any, db: mysql.Connection) {
 			res.status(400);
 			return;
 		}
-		if (isOwner(!user, response[0].created_user_id)) {
+		if (!isOwner(user, response[0].created_user_id)) {
 			res.status(401);
 			res.send("User is not authorized");
 			return;

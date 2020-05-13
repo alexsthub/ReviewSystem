@@ -1,7 +1,7 @@
 import React from "react";
 import "./SignUpForm.css";
 
-class SignUpForm extends React.Component {
+export default class SignUpForm extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -82,5 +82,3 @@ class SignUpForm extends React.Component {
 		);
 	}
 }
-
-export default SignUpForm;

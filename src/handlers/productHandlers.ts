@@ -55,7 +55,7 @@ function handleProductAdd(req: any, res: any, db: mysql.Connection) {
 			res.status(400);
 			return;
 		}
-		const creatorID = response[0].creator_id;
+		const creatorID: string = response[0].creator_id;
 		if (!isOwner(user, creatorID)) {
 			res.status(401);
 			res.send("User is not authenticated");

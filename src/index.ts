@@ -2,7 +2,13 @@ import express from "express";
 import morgan from "morgan";
 
 import db from "./db/database";
-import { handleReviewAdd, handleReviewDelete, handleReviewEdit } from "./handlers/reviewHandlers";
+import {
+	handleReviewAdd,
+	handleReviewDelete,
+	handleReviewEdit,
+	handleGetSpecificReview,
+	handleGetProductReviews,
+} from "./handlers/reviewHandlers";
 import {
 	handleGetTotalCompanies,
 	handleCompanyAdd,
@@ -64,6 +70,14 @@ app.delete("/products/:productID", (req: any, res: any) => {
 
 app.patch("/products/:productID", (req: any, res: any) => {
 	handleProductEdit(req, res, db);
+});
+
+app.get("/reviews/:reviewID", (req: any, res: any) => {
+	handleGetSpecificReview(req, res, db);
+});
+
+app.get("/reviews/:productID", (req: any, res: any) => {
+	handleGetProductReviews(req, res, db);
 });
 
 app.post("/reviews/:productID", (req: any, res: any) => {

@@ -22,6 +22,12 @@ function getCompanyByID(id: number, db: mysql.Connection, callback: Function) {
 	});
 }
 
+function getReviewByID(id: number, db: mysql.Connection, callback: Function) {
+	db.query("SELECT * from reviews WHERE id = ?", id, function (err: any, response: any) {
+		callback(err, response);
+	});
+}
+
 function verifyUserCanModifyProduct(
 	userID: number,
 	productID: number,
@@ -41,4 +47,11 @@ function verifyUserCanModifyProduct(
 	);
 }
 
-export { getUser, isOwner, getProductByID, getCompanyByID, verifyUserCanModifyProduct };
+export {
+	getUser,
+	isOwner,
+	getProductByID,
+	getCompanyByID,
+	verifyUserCanModifyProduct,
+	getReviewByID,
+};

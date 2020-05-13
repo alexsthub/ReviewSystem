@@ -34,6 +34,6 @@ create table if not exists reviews
   product_id int not null, 
   rating int not null,
   message varchar(256),
-  created timestamp not null,
-  createdUserID int not null,
+  created_user_id int not null,
+  time_created timestamp not null,
 );

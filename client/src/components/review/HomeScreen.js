@@ -8,7 +8,7 @@ export default class SignUpForm extends React.Component {
 
 	componentDidMount = () => {
 		console.log("heelo");
-		this.fetchCompanies();
+		// this.fetchCompanies();
 		// this.fetchProducts();
 	};
 

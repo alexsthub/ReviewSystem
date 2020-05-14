@@ -139,7 +139,7 @@ function handleReviewEdit(req: any, res: any, db: mysql.Connection) {
 
 	let edits = [];
 	if (reviewEdits.rating) edits.push(`rating = ${reviewEdits.rating}`);
-	if (reviewEdits.message) edits.push(`message = ${reviewEdits.message}`);
+	if (reviewEdits.message) edits.push(`message = "${reviewEdits.message}"`);
 	const editQuery = edits.join(",");
 	if (editQuery.length < 1) {
 		res.status(200);

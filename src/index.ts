@@ -3,11 +3,10 @@ import morgan from "morgan";
 
 import db from "./db/database";
 import {
+	handleGetReview,
 	handleReviewAdd,
 	handleReviewDelete,
 	handleReviewEdit,
-	handleGetSpecificReview,
-	handleGetProductReviews,
 } from "./handlers/reviewHandlers";
 import {
 	handleGetTotalCompanies,
@@ -72,12 +71,8 @@ app.patch("/products/:productID", (req: any, res: any) => {
 	handleProductEdit(req, res, db);
 });
 
-app.get("/reviews/:reviewID", (req: any, res: any) => {
-	handleGetSpecificReview(req, res, db);
-});
-
-app.get("/reviews/:productID", (req: any, res: any) => {
-	handleGetProductReviews(req, res, db);
+app.get("/reviews/:id", (req: any, res: any) => {
+	handleGetReview(req, res, db);
 });
 
 app.post("/reviews/:productID", (req: any, res: any) => {

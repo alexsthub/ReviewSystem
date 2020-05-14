@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function getUser(req) {
     let user = req.header("X-user");
     user = JSON.parse(user);
-    return user;
+    return JSON.parse(user);
 }
 exports.getUser = getUser;
 function isOwner(user, compareID) {
-    return user && compareID && user.id === compareID;
+    return user && compareID && user.id === Number(compareID);
 }
 exports.isOwner = isOwner;
 function getProductByID(id, db, callback) {

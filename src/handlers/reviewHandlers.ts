@@ -2,50 +2,36 @@ import mysql from "mysql";
 import url from "url";
 import { getUser, isOwner, getReviewByID } from "./helpers";
 
-function handleGetSpecificReview(req: any, res: any, db: mysql.Connection) {
-	const reviewID: number = Number(req.params.reviewID);
+function handleGetReview(req: any, res: any, db: mysql.Connection) {
+	const id: number = Number(req.params.id);
 	const queryObject = url.parse(req.url, true).query;
 	const limit = queryObject.limit;
-	db.query(
-		`SELECT * FROM reviews WHERE id = ?${limit ? ` limit ${limit}` : null}`,
-		reviewID,
-		function (err, response) {
-			if (err) {
-				res.status(400);
-				res.send("Error retrieving review");
-				return;
-			}
-			res.status(200);
-			res.json(response[0]);
-			return;
-		}
-	);
-}
+	const type = queryObject.type ? queryObject.type : "product";
+	let query = `SELECT * FROM reviews WHERE ${
+		type === "product" ? "product_id" : "id"
+	} = ? ORDER BY created_time desc`;
+	if (limit) query = query + ` limit ${limit}`;
 
-function handleGetProductReviews(req: any, res: any, db: mysql.Connection) {
-	const productID: number = Number(req.params.productID);
-	const queryObject = url.parse(req.url, true).query;
-	const limit = queryObject.limit;
-	db.query(
-		`SELECT * FROM reviews WHERE product_id = ?${limit ? ` limit ${limit}` : null}`,
-		productID,
-		function (err, response) {
-			if (err) {
-				res.status(400);
-				res.send("Error retrieving product reviews");
-				return;
-			}
-			res.status(200);
-			res.json(response);
+	db.query(query, id, function (err, response) {
+		if (err) {
+			res.status(400);
+			res.send("Error retrieving review");
 			return;
 		}
-	);
+		res.status(200);
+		res.json(response[0]);
+		return;
+	});
 }
 
 function handleGetTotalReviews(req: any, res: any, db: mysql.Connection) {
 	const queryObject = url.parse(req.url, true).query;
 	const limit = queryObject.limit;
-	db.query(`SELECT * FROM reviews${limit ? ` limit ${limit}` : null}`, function (err, response) {
+
+	let query = "SELECT * FROM reviews ORDER BY created_time desc";
+	if (limit) query = query + ` limit ${limit}`;
+
+	db.query(query, function (err, response) {
 		if (err) {
 			res.status(400);
 			res.send("Error retrieving product reviews");
@@ -61,31 +47,31 @@ function handleGetCompanyReviews(req: any, res: any, db: mysql.Connection) {
 	const companyID: number = Number(req.params.companyID);
 	const queryObject = url.parse(req.url, true).query;
 	const limit = queryObject.limit;
-	db.query(
-		`SELECT * FROM reviews t1 inner join products t2 on t1.product_id = t2.id WHERE t2.company_id = ?${
-			limit ? ` limit ${limit}` : null
-		}`,
-		companyID,
-		function (err, response) {
-			if (err) {
-				res.status(400);
-				res.send("Error retrieving company product reviews");
-				return;
-			}
-			res.status(200);
-			res.json(response);
+
+	let query =
+		"SELECT * FROM reviews t1 inner join products t2 on t1.product_id = t2.id WHERE t2.company_id = ? ORDER BY t1.created_time DESC";
+	if (limit) query = query + ` limit ${limit}`;
+
+	db.query(query, companyID, function (err, response) {
+		if (err) {
+			res.status(400);
+			res.send("Error retrieving company product reviews");
 			return;
 		}
-	);
+		res.status(200);
+		res.json(response);
+		return;
+	});
 }
 
 function handleReviewAdd(req: any, res: any, db: mysql.Connection) {
 	const productID = req.params.productID;
 	const newReview = req.body;
 	const user = getUser(req);
+
 	db.query(
-		"INSERT INTO reviews (product_id, rating, message, created_user_id, time_created) VALUES (?, ?, ?, ?, current_timestamp)",
-		[productID, newReview.rating, newReview.message, user.id],
+		"INSERT INTO reviews (product_id, rating, message, created_user_id, created_time) VALUES (?, ?, ?, ?, current_timestamp)",
+		[productID, newReview.rating, newReview.message, Number(user.id)],
 		function (err, response) {
 			if (err) {
 				res.status(400);
@@ -179,8 +165,7 @@ function handleReviewEdit(req: any, res: any, db: mysql.Connection) {
 }
 
 export {
-	handleGetProductReviews,
-	handleGetSpecificReview,
+	handleGetReview,
 	handleGetTotalReviews,
 	handleGetCompanyReviews,
 	handleReviewAdd,

@@ -44,11 +44,8 @@ app.delete("/products/:productID", (req, res) => {
 app.patch("/products/:productID", (req, res) => {
     productHandlers_1.handleProductEdit(req, res, database_1.default);
 });
-app.get("/reviews/:reviewID", (req, res) => {
-    reviewHandlers_1.handleGetSpecificReview(req, res, database_1.default);
-});
-app.get("/reviews/:productID", (req, res) => {
-    reviewHandlers_1.handleGetProductReviews(req, res, database_1.default);
+app.get("/reviews/:id", (req, res) => {
+    reviewHandlers_1.handleGetReview(req, res, database_1.default);
 });
 app.post("/reviews/:productID", (req, res) => {
     reviewHandlers_1.handleReviewAdd(req, res, database_1.default);

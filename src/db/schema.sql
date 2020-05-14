@@ -10,12 +10,12 @@ CREATE TABLE if not exists companies
   id int not null auto_increment primary key,
   company_name varchar(64) not null,
   creator_id varchar(64) not null, 
-  created timestamp not null,
+  created_time timestamp not null,
   UNIQUE KEY(company_name)
 );
 
-insert into companies
-(company_name, creator_id, created)
+INSERT INTO companies
+(company_name, creator_id, created_time)
 values
 ("test inc", "M3fdQvztKvdagO84WEvNJPf5krB3", current_timestamp);
 
@@ -24,9 +24,14 @@ CREATE TABLE if not exists products (
   product_name varchar(64) not null,
   company_id int not null,
   price double not null,
-  created timestamp not null,    
+  created_time timestamp not null,    
   UNIQUE KEY(product_name)
 );
+
+INSERT INTO products
+(product_name, company_id, price, created_time)
+VALUES
+("Test Product", 1, 3.69, current_timestamp);
 
 CREATE TABLE if not exists reviews (
   id int not null auto_increment primary key,
@@ -34,5 +39,10 @@ CREATE TABLE if not exists reviews (
   rating int not null,
   message varchar(256),
   created_user_id varchar(64) not null,
-  time_created timestamp not null
+  created_time timestamp not null
 );
+
+INSERT INTO reviews
+(product_id, rating, message, created_user_id, created_time)
+VALUES
+(1, 5, "Sensational product", "M3fdQvztKvdagO84WEvNJPf5krB3", current_timestamp);

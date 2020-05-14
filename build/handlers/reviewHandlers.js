@@ -5,11 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const url_1 = __importDefault(require("url"));
 const helpers_1 = require("./helpers");
-function handleGetSpecificReview(req, res, db) {
-    const reviewID = Number(req.params.reviewID);
+function handleGetReview(req, res, db) {
+    const id = Number(req.params.id);
     const queryObject = url_1.default.parse(req.url, true).query;
     const limit = queryObject.limit;
-    db.query(`SELECT * FROM reviews WHERE id = ?${limit ? ` limit ${limit}` : null}`, reviewID, function (err, response) {
+    const type = queryObject.type ? queryObject.type : "product";
+    let query = `SELECT * FROM reviews WHERE ${type === "product" ? "product_id" : "id"} = ? ORDER BY created_time desc`;
+    if (limit)
+        query = query + ` limit ${limit}`;
+    db.query(query, id, function (err, response) {
         if (err) {
             res.status(400);
             res.send("Error retrieving review");
@@ -20,27 +24,14 @@ function handleGetSpecificReview(req, res, db) {
         return;
     });
 }
-exports.handleGetSpecificReview = handleGetSpecificReview;
-function handleGetProductReviews(req, res, db) {
-    const productID = Number(req.params.productID);
-    const queryObject = url_1.default.parse(req.url, true).query;
-    const limit = queryObject.limit;
-    db.query(`SELECT * FROM reviews WHERE product_id = ?${limit ? ` limit ${limit}` : null}`, productID, function (err, response) {
-        if (err) {
-            res.status(400);
-            res.send("Error retrieving product reviews");
-            return;
-        }
-        res.status(200);
-        res.json(response);
-        return;
-    });
-}
-exports.handleGetProductReviews = handleGetProductReviews;
+exports.handleGetReview = handleGetReview;
 function handleGetTotalReviews(req, res, db) {
     const queryObject = url_1.default.parse(req.url, true).query;
     const limit = queryObject.limit;
-    db.query(`SELECT * FROM reviews${limit ? ` limit ${limit}` : null}`, function (err, response) {
+    let query = "SELECT * FROM reviews ORDER BY created_time desc";
+    if (limit)
+        query = query + ` limit ${limit}`;
+    db.query(query, function (err, response) {
         if (err) {
             res.status(400);
             res.send("Error retrieving product reviews");
@@ -56,7 +47,10 @@ function handleGetCompanyReviews(req, res, db) {
     const companyID = Number(req.params.companyID);
     const queryObject = url_1.default.parse(req.url, true).query;
     const limit = queryObject.limit;
-    db.query(`SELECT * FROM reviews t1 inner join products t2 on t1.product_id = t2.id WHERE t2.company_id = ?${limit ? ` limit ${limit}` : null}`, companyID, function (err, response) {
+    let query = "SELECT * FROM reviews t1 inner join products t2 on t1.product_id = t2.id WHERE t2.company_id = ? ORDER BY t1.created_time DESC";
+    if (limit)
+        query = query + ` limit ${limit}`;
+    db.query(query, companyID, function (err, response) {
         if (err) {
             res.status(400);
             res.send("Error retrieving company product reviews");
@@ -72,7 +66,7 @@ function handleReviewAdd(req, res, db) {
     const productID = req.params.productID;
     const newReview = req.body;
     const user = helpers_1.getUser(req);
-    db.query("INSERT INTO reviews (product_id, rating, message, created_user_id, time_created) VALUES (?, ?, ?, ?, current_timestamp)", [productID, newReview.rating, newReview.message, user.id], function (err, response) {
+    db.query("INSERT INTO reviews (product_id, rating, message, created_user_id, created_time) VALUES (?, ?, ?, ?, current_timestamp)", [productID, newReview.rating, newReview.message, Number(user.id)], function (err, response) {
         if (err) {
             res.status(400);
             res.send("Error creating new review");

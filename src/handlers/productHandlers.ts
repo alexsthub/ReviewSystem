@@ -20,7 +20,7 @@ function handleGetTotalProducts(_: any, res: any, db: mysql.Connection) {
 	db.query("SELECT * from products", function (err, response: object[]) {
 		if (err) {
 			res.status(400);
-			res.send("Error retrieving companies");
+			res.send("Error retrieving products");
 			return;
 		}
 		res.status(200);
@@ -114,7 +114,7 @@ function handleProductEdit(req: any, res: any, db: mysql.Connection) {
 
 	const edits: any = req.body;
 	let updates: string[] = [];
-	if (edits.name) updates.push(`product_name = ${edits.name}`);
+	if (edits.name) updates.push(`product_name = "${edits.name}"`);
 	if (edits.price) updates.push(`price = ${edits.price}`);
 	if (updates.length === 0) {
 		res.status(200);

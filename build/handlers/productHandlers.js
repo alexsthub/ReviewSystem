@@ -20,7 +20,7 @@ function handleGetTotalProducts(_, res, db) {
     db.query("SELECT * from products", function (err, response) {
         if (err) {
             res.status(400);
-            res.send("Error retrieving companies");
+            res.send("Error retrieving products");
             return;
         }
         res.status(200);
@@ -108,7 +108,7 @@ function handleProductEdit(req, res, db) {
     const edits = req.body;
     let updates = [];
     if (edits.name)
-        updates.push(`product_name = ${edits.name}`);
+        updates.push(`product_name = "${edits.name}"`);
     if (edits.price)
         updates.push(`price = ${edits.price}`);
     if (updates.length === 0) {

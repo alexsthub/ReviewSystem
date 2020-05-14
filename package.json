@@ -5,7 +5,8 @@
 	"main": "build/index.js",
 	"scripts": {
 		"start": "node build/index.js",
-		"test": "mocha ./build/tests/*.js --exit"
+		"test": "./src/tests/buildTest.sh",
+		"test2": "mocha ./build/tests/*.js --exit"
 	},
 	"repository": {
 		"type": "git",

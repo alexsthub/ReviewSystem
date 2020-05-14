@@ -96,7 +96,6 @@ describe("Testing for review handlers", function () {
                 done();
             });
         });
-        // TODO: Edit tests are failing
         it("Should edit message", (done) => {
             const payload = {
                 message: "new message",

@@ -2,7 +2,7 @@ import mysql from "mysql";
 
 let con: mysql.Connection = mysql.createConnection({
 	host: "localhost",
-	port: 3306,
+	port: 3307,
 	user: "root",
 	password: "password",
 	database: "reviewsystem",

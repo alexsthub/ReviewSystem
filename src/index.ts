@@ -1,7 +1,8 @@
 import express from "express";
 import morgan from "morgan";
 
-import db from "./db/database";
+// import db from "./db/database";
+import connectToMYSQL from "./db/database";
 import {
 	handleGetReview,
 	handleReviewAdd,
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 const port: number = Number(process.env.PORT) || 8080;
+const db = connectToMYSQL(false);
 
 app.get("/company", (req: any, res: any) => {
 	handleGetTotalCompanies(req, res, db);

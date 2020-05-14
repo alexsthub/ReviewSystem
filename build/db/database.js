@@ -4,17 +4,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mysql_1 = __importDefault(require("mysql"));
-let con = mysql_1.default.createConnection({
-    host: "localhost",
-    port: 3307,
-    user: "root",
-    password: "password",
-    database: "reviewsystem",
-});
-con.connect(function (err) {
-    if (err)
-        throw err;
-    console.log("Connected!");
-});
-exports.default = con;
+function connectToMySQL(isTest) {
+    const port = isTest ? 3308 : 3307;
+    let con = mysql_1.default.createConnection({
+        host: "localhost",
+        port: port,
+        user: "root",
+        password: "password",
+        database: "reviewsystem",
+    });
+    con.connect(function (err) {
+        if (err)
+            throw err;
+        console.log("Connected!");
+    });
+    return con;
+}
+exports.default = connectToMySQL;
 //# sourceMappingURL=database.js.map

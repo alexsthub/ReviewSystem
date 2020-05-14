@@ -1,15 +1,20 @@
 import mysql from "mysql";
+import { connect } from "http2";
 
-let con: mysql.Connection = mysql.createConnection({
-	host: "localhost",
-	port: 3307,
-	user: "root",
-	password: "password",
-	database: "reviewsystem",
-});
-con.connect(function (err: any) {
-	if (err) throw err;
-	console.log("Connected!");
-});
+function connectToMySQL(isTest?: boolean) {
+	const port = isTest ? 3308 : 3307;
+	let con: mysql.Connection = mysql.createConnection({
+		host: "localhost",
+		port: port,
+		user: "root",
+		password: "password",
+		database: "reviewsystem",
+	});
+	con.connect(function (err: any) {
+		if (err) throw err;
+		console.log("Connected!");
+	});
+	return con;
+}
 
-export default con;
+export default connectToMySQL;

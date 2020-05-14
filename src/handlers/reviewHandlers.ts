@@ -1,6 +1,6 @@
 import mysql from "mysql";
 import url from "url";
-import { getUser, isOwner, getReviewByID } from "./helpers";
+import { getUser, isOwner, getReviewByID, getProductByID } from "./helpers";
 
 function handleGetReview(req: any, res: any, db: mysql.Connection) {
 	const id: number = Number(req.params.id);
@@ -19,7 +19,8 @@ function handleGetReview(req: any, res: any, db: mysql.Connection) {
 			return;
 		}
 		res.status(200);
-		res.json(response[0]);
+		if (type === "product") res.json(response);
+		else res.json(response[0]);
 		return;
 	});
 }
@@ -30,7 +31,6 @@ function handleGetTotalReviews(req: any, res: any, db: mysql.Connection) {
 
 	let query = "SELECT * FROM reviews ORDER BY created_time desc";
 	if (limit) query = query + ` limit ${limit}`;
-
 	db.query(query, function (err, response) {
 		if (err) {
 			res.status(400);
@@ -69,26 +69,39 @@ function handleReviewAdd(req: any, res: any, db: mysql.Connection) {
 	const newReview = req.body;
 	const user = getUser(req);
 
-	db.query(
-		"INSERT INTO reviews (product_id, rating, message, created_user_id, created_time) VALUES (?, ?, ?, ?, current_timestamp)",
-		[productID, newReview.rating, newReview.message, Number(user.id)],
-		function (err, response) {
-			if (err) {
-				res.status(400);
-				res.send("Error creating new review");
-				return;
-			}
-			getReviewByID(response.insertId, db, function (err: mysql.MysqlError, response: any) {
-				res.status(201);
+	getProductByID(productID, db, function (err: mysql.MysqlError, response: any) {
+		if (err) {
+			res.status(400);
+			res.send("Cannot verify product");
+			return;
+		}
+		if (response.length < 1) {
+			res.status(400);
+			res.send("Cannot write a review for a product that does not exist");
+			return;
+		}
+
+		db.query(
+			"INSERT INTO reviews (product_id, rating, message, created_user_id, created_time) VALUES (?, ?, ?, ?, current_timestamp)",
+			[productID, newReview.rating, newReview.message, user.id],
+			function (err, response) {
 				if (err) {
-					res.send("Review created but error retrieving row");
+					res.status(400);
+					res.send("Error creating new review");
 					return;
 				}
-				res.json(response[0]);
-				return;
-			});
-		}
-	);
+				getReviewByID(response.insertId, db, function (err: mysql.MysqlError, response: any) {
+					res.status(201);
+					if (err) {
+						res.send("Review created but error retrieving row");
+						return;
+					}
+					res.json(response[0]);
+					return;
+				});
+			}
+		);
+	});
 }
 
 function handleReviewDelete(req: any, res: any, db: mysql.Connection) {
@@ -96,8 +109,9 @@ function handleReviewDelete(req: any, res: any, db: mysql.Connection) {
 	const user = getUser(req);
 
 	getReviewByID(reviewID, db, function (err: mysql.MysqlError, response: any) {
-		if (err) {
+		if (err || response.length === 0) {
 			res.status(400);
+			res.send("Cannot verify review");
 			return;
 		}
 		if (!isOwner(user, response[0].created_user_id)) {
@@ -167,7 +181,6 @@ function handleReviewEdit(req: any, res: any, db: mysql.Connection) {
 export {
 	handleGetReview,
 	handleGetTotalReviews,
-	handleGetCompanyReviews,
 	handleReviewAdd,
 	handleReviewDelete,
 	handleReviewEdit,

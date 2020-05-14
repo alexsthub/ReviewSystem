@@ -20,7 +20,10 @@ function handleGetReview(req, res, db) {
             return;
         }
         res.status(200);
-        res.json(response[0]);
+        if (type === "product")
+            res.json(response);
+        else
+            res.json(response[0]);
         return;
     });
 }
@@ -61,25 +64,36 @@ function handleGetCompanyReviews(req, res, db) {
         return;
     });
 }
-exports.handleGetCompanyReviews = handleGetCompanyReviews;
 function handleReviewAdd(req, res, db) {
     const productID = req.params.productID;
     const newReview = req.body;
     const user = helpers_1.getUser(req);
-    db.query("INSERT INTO reviews (product_id, rating, message, created_user_id, created_time) VALUES (?, ?, ?, ?, current_timestamp)", [productID, newReview.rating, newReview.message, Number(user.id)], function (err, response) {
+    helpers_1.getProductByID(productID, db, function (err, response) {
         if (err) {
             res.status(400);
-            res.send("Error creating new review");
+            res.send("Cannot verify product");
             return;
         }
-        helpers_1.getReviewByID(response.insertId, db, function (err, response) {
-            res.status(201);
+        if (response.length < 1) {
+            res.status(400);
+            res.send("Cannot write a review for a product that does not exist");
+            return;
+        }
+        db.query("INSERT INTO reviews (product_id, rating, message, created_user_id, created_time) VALUES (?, ?, ?, ?, current_timestamp)", [productID, newReview.rating, newReview.message, user.id], function (err, response) {
             if (err) {
-                res.send("Review created but error retrieving row");
+                res.status(400);
+                res.send("Error creating new review");
                 return;
             }
-            res.json(response[0]);
-            return;
+            helpers_1.getReviewByID(response.insertId, db, function (err, response) {
+                res.status(201);
+                if (err) {
+                    res.send("Review created but error retrieving row");
+                    return;
+                }
+                res.json(response[0]);
+                return;
+            });
         });
     });
 }
@@ -88,8 +102,9 @@ function handleReviewDelete(req, res, db) {
     const reviewID = Number(req.params.reviewID);
     const user = helpers_1.getUser(req);
     helpers_1.getReviewByID(reviewID, db, function (err, response) {
-        if (err) {
+        if (err || response.length === 0) {
             res.status(400);
+            res.send("Cannot verify review");
             return;
         }
         if (!helpers_1.isOwner(user, response[0].created_user_id)) {

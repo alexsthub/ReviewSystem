@@ -31,7 +31,8 @@ CREATE TABLE if not exists products (
 INSERT INTO products
 (product_name, company_id, price, created_time)
 VALUES
-("Test Product", 1, 3.69, current_timestamp);
+("Test Product", 1, 3.69, current_timestamp),
+("Test Product Two", 1, 4.00, current_timestamp);
 
 CREATE TABLE if not exists reviews (
   id int not null auto_increment primary key,
@@ -45,4 +46,5 @@ CREATE TABLE if not exists reviews (
 INSERT INTO reviews
 (product_id, rating, message, created_user_id, created_time)
 VALUES
-(1, 5, "Sensational product", "M3fdQvztKvdagO84WEvNJPf5krB3", current_timestamp);
+(1, 5, "Sensational product", "M3fdQvztKvdagO84WEvNJPf5krB3", current_timestamp),
+(1, 4, "Pretty good product", "M3fdQvztKvdagO84WEvNJPf5krB3", current_timestamp);

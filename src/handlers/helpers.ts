@@ -2,12 +2,12 @@ import mysql from "mysql";
 
 function getUser(req: any) {
 	let user = req.header("X-user");
-	user = JSON.parse(user);
+	// user = JSON.parse(user);
 	return JSON.parse(user);
 }
 
 function isOwner(user: any, compareID: any) {
-	return user && compareID && user.id === Number(compareID);
+	return user && compareID && user.id === compareID;
 }
 
 function getProductByID(id: number, db: mysql.Connection, callback: Function) {

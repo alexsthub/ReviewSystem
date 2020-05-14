@@ -7,6 +7,7 @@ import {
 	handleReviewAdd,
 	handleReviewDelete,
 	handleReviewEdit,
+	handleGetTotalReviews,
 } from "./handlers/reviewHandlers";
 import {
 	handleGetTotalCompanies,
@@ -28,8 +29,6 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 const port: number = Number(process.env.PORT) || 8080;
-
-// TODO: Tests
 
 app.get("/company", (req: any, res: any) => {
 	handleGetTotalCompanies(req, res, db);
@@ -69,6 +68,10 @@ app.delete("/products/:productID", (req: any, res: any) => {
 
 app.patch("/products/:productID", (req: any, res: any) => {
 	handleProductEdit(req, res, db);
+});
+
+app.get("/reviews", (req: any, res: any) => {
+	handleGetTotalReviews(req, res, db);
 });
 
 app.get("/reviews/:id", (req: any, res: any) => {

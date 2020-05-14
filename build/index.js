@@ -13,7 +13,6 @@ const app = express_1.default();
 app.use(express_1.default.json());
 app.use(morgan_1.default("dev"));
 const port = Number(process.env.PORT) || 8080;
-// TODO: Tests
 app.get("/company", (req, res) => {
     companyHandlers_1.handleGetTotalCompanies(req, res, database_1.default);
 });
@@ -43,6 +42,9 @@ app.delete("/products/:productID", (req, res) => {
 });
 app.patch("/products/:productID", (req, res) => {
     productHandlers_1.handleProductEdit(req, res, database_1.default);
+});
+app.get("/reviews", (req, res) => {
+    reviewHandlers_1.handleGetTotalReviews(req, res, database_1.default);
 });
 app.get("/reviews/:id", (req, res) => {
     reviewHandlers_1.handleGetReview(req, res, database_1.default);

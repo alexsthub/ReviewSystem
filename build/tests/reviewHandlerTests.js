@@ -8,11 +8,12 @@ const chai_http_1 = __importDefault(require("chai-http"));
 chai_1.default.use(chai_http_1.default);
 chai_1.default.should();
 const index_1 = __importDefault(require("../index"));
+const app = index_1.default(true);
 describe("Testing for review handlers", function () {
     describe("GET /", function () {
         it("should return a single review by reviewID", (done) => {
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .get("/reviews/1?type=review")
                 .end((err, res) => {
                 res.should.have.status(200);
@@ -23,7 +24,7 @@ describe("Testing for review handlers", function () {
         });
         it("should return 2 reviews by productID", (done) => {
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .get("/reviews/1/?type=product")
                 .end((err, res) => {
                 res.should.have.status(200);
@@ -34,7 +35,7 @@ describe("Testing for review handlers", function () {
         });
         it("should return empty on nonexistent productID", (done) => {
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .get("/reviews/0")
                 .end((err, res) => {
                 res.should.have.status(200);
@@ -50,7 +51,7 @@ describe("Testing for review handlers", function () {
                 message: "Testing",
             };
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .post("/reviews/2")
                 .set("X-user", '{"id": "M3fdQvztKvdagO84WEvNJPf5krB3"}')
                 .send(payload)
@@ -68,7 +69,7 @@ describe("Testing for review handlers", function () {
                 message: "Testing",
             };
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .post("/reviews/0")
                 .set("X-user", '{"id": "M3fdQvztKvdagO84WEvNJPf5krB3"}')
                 .send(payload)
@@ -84,7 +85,7 @@ describe("Testing for review handlers", function () {
                 rating: 1,
             };
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .patch("/reviews/3")
                 .set("X-user", '{"id": "M3fdQvztKvdagO84WEvNJPf5krB3"}')
                 .send(payload)
@@ -101,7 +102,7 @@ describe("Testing for review handlers", function () {
                 message: "new message",
             };
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .patch("/reviews/3")
                 .set("X-user", '{"id": "M3fdQvztKvdagO84WEvNJPf5krB3"}')
                 .send(payload)
@@ -119,7 +120,7 @@ describe("Testing for review handlers", function () {
                 message: "edit both",
             };
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .patch("/reviews/3")
                 .set("X-user", '{"id": "M3fdQvztKvdagO84WEvNJPf5krB3"}')
                 .send(payload)
@@ -137,7 +138,7 @@ describe("Testing for review handlers", function () {
     describe("DELETE /", function () {
         it("Should delete a post", (done) => {
             chai_1.default
-                .request(index_1.default)
+                .request(app)
                 .delete("/reviews/3")
                 .set("X-user", '{"id": "M3fdQvztKvdagO84WEvNJPf5krB3"}')
                 .end((err, res) => {

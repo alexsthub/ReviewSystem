@@ -1,5 +1,4 @@
-echo hello
-
+echo "Building container...\n"
 docker build -t alexsthub/reviewsystemtest .
 
 docker rm -f reviewsystemtest
@@ -11,6 +10,9 @@ docker run -d \
 -e MYSQL_DATABASE="reviewsystem" \
 alexsthub/reviewsystemtest:latest
 
-# mocha ../../build/tests/*.js --exit
+printf "\nWaiting for test container to spin up...\n"
+sleep 15
 
-# docker rm -f reviewsystemtest
+mocha ../../build/tests/*.js --exit
+
+docker rm -f reviewsystemtest

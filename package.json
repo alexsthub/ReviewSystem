@@ -4,9 +4,7 @@
 	"description": "A product review system",
 	"main": "build/index.js",
 	"scripts": {
-		"start": "node build/index.js",
-		"test": "./src/tests/buildTest.sh",
-		"test2": "mocha ./build/tests/*.js --exit"
+		"start": "node build/index.js"
 	},
 	"repository": {
 		"type": "git",

@@ -3,8 +3,9 @@ import chaiHttp from "chai-http";
 chai.use(chaiHttp);
 chai.should();
 
-import app from "../index";
+import createMux from "../index";
 
+const app = createMux(true);
 describe("Testing for review handlers", function () {
 	describe("GET /", function () {
 		it("should return a single review by reviewID", (done) => {

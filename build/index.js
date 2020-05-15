@@ -13,7 +13,9 @@ function createMux(test) {
     const app = express_1.default();
     app.use(express_1.default.json());
     app.use(morgan_1.default("dev"));
-    const port = Number(process.env.PORT) || 8080;
+    let port = Number(process.env.PORT) || 8080;
+    if (test)
+        port = 8081;
     const db = database_1.default(test);
     app.get("/company", (req, res) => {
         companyHandlers_1.handleGetTotalCompanies(req, res, db);
@@ -27,13 +29,13 @@ function createMux(test) {
     app.patch("/company/:companyID", (req, res) => {
         companyHandlers_1.handleCompanyEdit(req, res, db);
     });
-    app.get("/products/:productID", (req, res) => {
-        productHandlers_1.handleGetSpecificProduct(req, res, db);
-    });
     app.get("/products", (req, res) => {
         productHandlers_1.handleGetTotalProducts(req, res, db);
     });
-    app.get("/products/:companyID", (req, res) => {
+    app.get("/products/:productID", (req, res) => {
+        productHandlers_1.handleGetSpecificProduct(req, res, db);
+    });
+    app.get("/products/company/:companyID", (req, res) => {
         productHandlers_1.handleGetCompanyProducts(req, res, db);
     });
     app.post("/products", (req, res) => {

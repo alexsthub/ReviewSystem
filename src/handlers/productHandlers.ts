@@ -1,4 +1,6 @@
 import mysql from "mysql";
+import url from "url";
+
 import { getUser, isOwner, getProductByID, verifyUserCanModifyProduct } from "./helpers";
 
 // TODO: When i get these products I need to query reviews to get average
@@ -12,19 +14,6 @@ function handleGetSpecificProduct(req: any, res: any, db: mysql.Connection) {
 		}
 		res.status(200);
 		res.json(response[0]);
-		return;
-	});
-}
-
-function handleGetTotalProducts(_: any, res: any, db: mysql.Connection) {
-	db.query("SELECT * from products", function (err, response: object[]) {
-		if (err) {
-			res.status(400);
-			res.send("Error retrieving products");
-			return;
-		}
-		res.status(200);
-		res.json(response);
 		return;
 	});
 }
@@ -43,16 +32,33 @@ function handleGetCompanyProducts(req: any, res: any, db: mysql.Connection) {
 	});
 }
 
+function handleGetTotalProducts(req: any, res: any, db: mysql.Connection) {
+	const queryObject = url.parse(req.url, true).query;
+	const limit = queryObject.limit;
+	let query = "SELECT * FROM products ORDER BY created_time desc";
+	if (limit) query = query + ` limit ${limit}`;
+	db.query(query, function (err, response: object[]) {
+		if (err) {
+			res.status(400);
+			res.send("Error retrieving products");
+			return;
+		}
+		res.status(200);
+		res.json(response);
+		return;
+	});
+}
+
 function handleProductAdd(req: any, res: any, db: mysql.Connection) {
 	const newProduct: any = req.body;
 	const name: string = newProduct.name;
 	const price: number = newProduct.price;
 	const companyID: number = newProduct.companyID;
-
 	const user = getUser(req);
-	db.query("SELECT * FROM companies WHERE companyID = ?", companyID, function (err, response) {
+	db.query("SELECT * FROM companies WHERE id = ?", companyID, function (err, response) {
 		if (err) {
 			res.status(400);
+			res.send("Error getting company");
 			return;
 		}
 		const creatorID: string = response[0].creator_id;
@@ -62,7 +68,7 @@ function handleProductAdd(req: any, res: any, db: mysql.Connection) {
 			return;
 		}
 		db.query(
-			"INSERT INTO products (product_name, company_id, price, created) VALUES (?, ?, ?, current_timestamp)",
+			"INSERT INTO products (product_name, company_id, price, created_time) VALUES (?, ?, ?, current_timestamp)",
 			[name, companyID, price],
 			function (err, response) {
 				if (err) {
@@ -122,8 +128,8 @@ function handleProductEdit(req: any, res: any, db: mysql.Connection) {
 		return;
 	}
 
-	const setStatement = updates.join(",");
-	const query = "UPDATE products SET " + setStatement + " WHERE productID = ?";
+	const setStatement = updates.join(", ");
+	const query = "UPDATE products SET " + setStatement + " WHERE id = ?";
 	verifyUserCanModifyProduct(user.id, productID, db, function (success: boolean) {
 		if (!success) {
 			res.status(401);

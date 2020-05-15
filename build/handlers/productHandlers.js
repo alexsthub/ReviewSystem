@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const url_1 = __importDefault(require("url"));
 const helpers_1 = require("./helpers");
 // TODO: When i get these products I need to query reviews to get average
 function handleGetSpecificProduct(req, res, db) {
@@ -16,19 +20,6 @@ function handleGetSpecificProduct(req, res, db) {
     });
 }
 exports.handleGetSpecificProduct = handleGetSpecificProduct;
-function handleGetTotalProducts(_, res, db) {
-    db.query("SELECT * from products", function (err, response) {
-        if (err) {
-            res.status(400);
-            res.send("Error retrieving products");
-            return;
-        }
-        res.status(200);
-        res.json(response);
-        return;
-    });
-}
-exports.handleGetTotalProducts = handleGetTotalProducts;
 function handleGetCompanyProducts(req, res, db) {
     const companyID = Number(req.params.companyID);
     db.query("SELECT * from products WHERE company_id = ?", companyID, function (err, response) {
@@ -43,15 +34,34 @@ function handleGetCompanyProducts(req, res, db) {
     });
 }
 exports.handleGetCompanyProducts = handleGetCompanyProducts;
+function handleGetTotalProducts(req, res, db) {
+    const queryObject = url_1.default.parse(req.url, true).query;
+    const limit = queryObject.limit;
+    let query = "SELECT * FROM products ORDER BY created_time desc";
+    if (limit)
+        query = query + ` limit ${limit}`;
+    db.query(query, function (err, response) {
+        if (err) {
+            res.status(400);
+            res.send("Error retrieving products");
+            return;
+        }
+        res.status(200);
+        res.json(response);
+        return;
+    });
+}
+exports.handleGetTotalProducts = handleGetTotalProducts;
 function handleProductAdd(req, res, db) {
     const newProduct = req.body;
     const name = newProduct.name;
     const price = newProduct.price;
     const companyID = newProduct.companyID;
     const user = helpers_1.getUser(req);
-    db.query("SELECT * FROM companies WHERE companyID = ?", companyID, function (err, response) {
+    db.query("SELECT * FROM companies WHERE id = ?", companyID, function (err, response) {
         if (err) {
             res.status(400);
+            res.send("Error getting company");
             return;
         }
         const creatorID = response[0].creator_id;
@@ -60,7 +70,7 @@ function handleProductAdd(req, res, db) {
             res.send("User is not authenticated");
             return;
         }
-        db.query("INSERT INTO products (product_name, company_id, price, created) VALUES (?, ?, ?, current_timestamp)", [name, companyID, price], function (err, response) {
+        db.query("INSERT INTO products (product_name, company_id, price, created_time) VALUES (?, ?, ?, current_timestamp)", [name, companyID, price], function (err, response) {
             if (err) {
                 res.status(400);
                 res.send("Error creating new product");
@@ -116,8 +126,8 @@ function handleProductEdit(req, res, db) {
         res.send("No updates were made.");
         return;
     }
-    const setStatement = updates.join(",");
-    const query = "UPDATE products SET " + setStatement + " WHERE productID = ?";
+    const setStatement = updates.join(", ");
+    const query = "UPDATE products SET " + setStatement + " WHERE id = ?";
     helpers_1.verifyUserCanModifyProduct(user.id, productID, db, function (success) {
         if (!success) {
             res.status(401);

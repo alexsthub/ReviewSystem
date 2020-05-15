@@ -29,7 +29,8 @@ export default function createMux(test: boolean) {
 	app.use(express.json());
 	app.use(morgan("dev"));
 
-	const port: number = Number(process.env.PORT) || 8080;
+	let port: number = Number(process.env.PORT) || 8080;
+	if (test) port = 8081;
 	const db = connectToMYSQL(test);
 
 	app.get("/company", (req: any, res: any) => {
@@ -48,15 +49,15 @@ export default function createMux(test: boolean) {
 		handleCompanyEdit(req, res, db);
 	});
 
-	app.get("/products/:productID", (req: any, res: any) => {
-		handleGetSpecificProduct(req, res, db);
-	});
-
 	app.get("/products", (req: any, res: any) => {
 		handleGetTotalProducts(req, res, db);
 	});
 
-	app.get("/products/:companyID", (req: any, res: any) => {
+	app.get("/products/:productID", (req: any, res: any) => {
+		handleGetSpecificProduct(req, res, db);
+	});
+
+	app.get("/products/company/:companyID", (req: any, res: any) => {
 		handleGetCompanyProducts(req, res, db);
 	});
 

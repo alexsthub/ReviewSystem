@@ -1,5 +1,4 @@
 import mysql from "mysql";
-import { connect } from "http2";
 
 function connectToMySQL(isTest?: boolean) {
 	const port = isTest ? 3308 : 3307;

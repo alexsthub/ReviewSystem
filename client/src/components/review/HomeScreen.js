@@ -17,7 +17,6 @@ export default class SignUpForm extends React.Component {
 				return response.json();
 			})
 			.then((allCompanies) => {
-				console.log(allCompanies);
 				this.setState({ companies: allCompanies });
 			})
 			.catch((err) => {
@@ -31,7 +30,6 @@ export default class SignUpForm extends React.Component {
 				return response.json();
 			})
 			.then((allProducts) => {
-				console.log(allProducts);
 				this.setState({ products: allProducts });
 			})
 			.catch((err) => {
@@ -40,9 +38,31 @@ export default class SignUpForm extends React.Component {
 	};
 
 	render() {
+		const companies = this.state.companies
+			? this.state.companies.map((c) => {
+					return <li key={c.company_name}>{c.company_name}</li>;
+			  })
+			: null;
+
+		const products = this.state.products
+			? this.state.products.map((p) => {
+					return <li key={p.product_name}>{p.product_name}</li>;
+			  })
+			: null;
+
 		return (
 			<div>
 				<p>Hello, this is the main content</p>
+
+				<div>
+					<p style={{ fontSize: 24 }}>List of Companies</p>
+					<ul>{companies}</ul>
+				</div>
+
+				<div>
+					<p style={{ fontSize: 24 }}>List of Products</p>
+					<ul>{products}</ul>
+				</div>
 			</div>
 		);
 	}

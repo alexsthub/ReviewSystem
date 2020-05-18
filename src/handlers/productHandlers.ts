@@ -3,7 +3,6 @@ import url from "url";
 
 import { getUser, isOwner, getProductByID, verifyUserCanModifyProduct } from "./helpers";
 
-// TODO: When i get these products I need to query reviews to get average
 function handleGetSpecificProduct(req: any, res: any, db: mysql.Connection) {
 	const productID: number = Number(req.params.productID);
 	getProductByID(productID, db, function (err: any, response: any) {
@@ -20,7 +19,10 @@ function handleGetSpecificProduct(req: any, res: any, db: mysql.Connection) {
 
 function handleGetCompanyProducts(req: any, res: any, db: mysql.Connection) {
 	const companyID: number = Number(req.params.companyID);
-	db.query("SELECT * from products WHERE company_id = ?", companyID, function (err, response) {
+	db.query("SELECT * from products WHERE company_id = ?", companyID, function (
+		err: mysql.MysqlError,
+		response: any
+	) {
 		if (err) {
 			res.status(400);
 			res.send("Cannot get company products");

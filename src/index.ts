@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
 
 import connectToMYSQL from "./db/database";
 import {
@@ -28,6 +29,7 @@ export default function createMux(test: boolean) {
 	const app = express();
 	app.use(express.json());
 	app.use(morgan("dev"));
+	app.use(cors());
 
 	let port: number = Number(process.env.PORT) || 8080;
 	if (test) port = 8081;

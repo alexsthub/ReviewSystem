@@ -7,9 +7,8 @@ export default class SignUpForm extends React.Component {
 	}
 
 	componentDidMount = () => {
-		console.log("heelo");
-		// this.fetchCompanies();
-		// this.fetchProducts();
+		this.fetchCompanies();
+		this.fetchProducts();
 	};
 
 	fetchCompanies = () => {
@@ -18,6 +17,7 @@ export default class SignUpForm extends React.Component {
 				return response.json();
 			})
 			.then((allCompanies) => {
+				console.log(allCompanies);
 				this.setState({ companies: allCompanies });
 			})
 			.catch((err) => {
@@ -31,6 +31,7 @@ export default class SignUpForm extends React.Component {
 				return response.json();
 			})
 			.then((allProducts) => {
+				console.log(allProducts);
 				this.setState({ products: allProducts });
 			})
 			.catch((err) => {

@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const url_1 = __importDefault(require("url"));
 const helpers_1 = require("./helpers");
-// TODO: When i get these products I need to query reviews to get average
 function handleGetSpecificProduct(req, res, db) {
     const productID = Number(req.params.productID);
     helpers_1.getProductByID(productID, db, function (err, response) {

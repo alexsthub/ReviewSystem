@@ -18,7 +18,7 @@
 	"homepage": "https://github.com/alexsthub/ReviewSystem#readme",
 	"dependencies": {
 		"cors": "^2.8.5",
-		"express": "^4.17.1",
+		"express": "^4.17.3",
 		"morgan": "^1.10.0",
 		"mysql": "^2.18.1",
 		"url": "^0.11.0"
